@@ -1,70 +1,18 @@
-<form [formGroup]="form" (ngSubmit)="onSubmit()" dir="rtl">
-  <div class="form-container">
-    <div class="form-row">
-      <div class="form-group">
-        <label for="studentname">שם התלמיד</label>
-        <input id="studentname" type="text" formControlName="studentname" placeholder="שם התלמיד"/>
-        <small *ngIf="form.controls['studentname'].invalid &&
-          (form.controls['studentname'].touched || form.controls['studentname'].dirty)">
-          <small *ngIf="form.controls['studentname'].errors?.['required']">
-            *שם התלמיד הוא שדה חובה
-          </small>
-          <small *ngIf="form.controls['studentname'].errors?.['minlength']">
-            *שם התלמיד חייב להכיל לפחות 2 תווים
-          </small>
-          <small *ngIf="form.controls['studentname'].errors?.['pattern']">
-            *שם התלמיד חייב להיות בעברית בלבד
-          </small>
-        </small>
-        <small *ngIf="studentExists" style="color: red;">
-          *שם התלמיד כבר קיים
-        </small>
-      </div>
-
-      <div class="form-group">
-        <label for="grade">ציון</label>
-        <input id="grade" type="number" formControlName="grade" placeholder="ציון"/>
-        <small *ngIf="form.controls['grade'].invalid &&
-          (form.controls['grade'].touched || form.controls['grade'].dirty)">
-          <small *ngIf="form.controls['grade'].errors?.['required']">
-            *ציון התלמיד הוא שדה חובה
-          </small>
-          <small *ngIf="form.controls['grade'].errors?.['min']">
-            *ציון התלמיד חייב להיות במינמום 0
-          </small>
-          <small *ngIf="form.controls['grade'].errors?.['max']">
-            *ציון התלמיד חייב להיות במקסימום ציון 100
-          </small>
-          <small *ngIf="form.controls['grade'].errors?.['pattern']">
-            *ציון התלמיד חייב להיות מספר שלם בלבד
-          </small>
-        </small>
-      </div>
-
-      <button type="submit" [disabled]="!form.valid">הוסף</button>
+<div class="container">
+  <h1>ציוני מבחן בחשבון כיתה א3</h1>
+  <div class="controls">
+    <div class="average-box">
+      <p>ממוצע ציונים: {{ getAverageGrade() | number:'1.0-2' }}</p>
     </div>
   </div>
-</form>
-
-<div class="students-list" dir="rtl">
-  <button (click)="sortGrades()">מיין ציונים</button>
-  <table>
-    <thead>
-      <tr>
-        <th>שם התלמיד</th>
-        <th>ציון</th>
-        <th>פעולות</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let student of students">
-        <td [ngClass]="{'strikethrough': student.deleted}">{{ student.studentname }}</td>
-        <td [ngClass]="{'strikethrough': student.deleted, 'deleted-grade': student.deleted, 'grade-high': getGradeClass(student.grade) === 'grade-high', 'grade-medium': getGradeClass(student.grade) === 'grade-medium', 'grade-low': getGradeClass(student.grade) === 'grade-low'}">{{ student.grade }}</td>
-        <td>
-          <button class="action-button delete-button" (click)="deleteStudent(student)">מחק</button>
-          <button class="action-button restore-button" (click)="restoreStudent(student)" *ngIf="student.deleted">שחזר</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <app-student-form
+    (studentAdded)="onStudentAdded($event)"
+    [studentExists]="studentExists">
+  </app-student-form>
+  <app-student-list
+    [students]="students"
+    (studentDeleted)="deleteStudent($event)"
+    (studentRestored)="restoreStudent($event)"
+    (gradesSorted)="sortGrades()">
+  </app-student-list>
 </div>

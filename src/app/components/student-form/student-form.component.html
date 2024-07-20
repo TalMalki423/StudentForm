@@ -1,0 +1,47 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" dir="rtl">
+  <div class="form-container">
+    <div class="form-row">
+      <div class="form-group">
+        <label for="studentname">שם התלמיד</label>
+        <input id="studentname" type="text" formControlName="studentname" placeholder="שם התלמיד"/>
+        <small *ngIf="form.controls['studentname'].invalid &&
+                       (form.controls['studentname'].touched || form.controls['studentname'].dirty)">
+          <small *ngIf="form.controls['studentname'].errors?.['required']">
+            *שם התלמיד הוא שדה חובה
+          </small>
+          <small *ngIf="form.controls['studentname'].errors?.['minlength']">
+            *שם התלמיד חייב להכיל לפחות 2 תווים
+          </small>
+          <small *ngIf="form.controls['studentname'].errors?.['pattern']">
+            *שם התלמיד חייב להיות בעברית בלבד
+          </small>
+        </small>
+        <small *ngIf="studentExists && !form.controls['studentname'].invalid && (form.dirty || form.touched)">
+          *שם התלמיד כבר קיים ברשימה
+        </small>
+      </div>
+
+      <div class="form-group">
+        <label for="grade">ציון</label>
+        <input id="grade" type="number" formControlName="grade" placeholder="ציון"/>
+        <small *ngIf="form.controls['grade'].invalid &&
+                       (form.controls['grade'].touched || form.controls['grade'].dirty)">
+          <small *ngIf="form.controls['grade'].errors?.['required']">
+            *ציון התלמיד הוא שדה חובה
+          </small>
+          <small *ngIf="form.controls['grade'].errors?.['min']">
+            *ציון התלמיד חייב להיות במינמום 0
+          </small>
+          <small *ngIf="form.controls['grade'].errors?.['max']">
+            *ציון התלמיד חייב להיות במקסימום ציון 100
+          </small>
+          <small *ngIf="form.controls['grade'].errors?.['pattern']">
+            *ציון התלמיד חייב להיות מספר שלם בלבד
+          </small>
+        </small>
+      </div>
+
+      <button type="submit" [disabled]="!form.valid">הוסף</button>
+    </div>
+  </div>
+</form>

@@ -1,15 +1,17 @@
-import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RouterOutlet } from '@angular/router';
-
+import { ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { StudentFormComponent } from './components/student-form/student-form.component';
+import { StudentListComponent } from './components/student-list/student-list.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, ReactiveFormsModule, CommonModule],
+  imports: [RouterOutlet, ReactiveFormsModule, CommonModule, StudentFormComponent, StudentListComponent],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
   form: FormGroup;
@@ -42,17 +44,11 @@ export class AppComponent implements OnInit {
     }
   }
 
-  onSubmit() {
-    if (this.form.valid) {
-      const newStudent = this.form.value;
-      if (this.isStudentExists(newStudent.studentname)) {
-        this.studentExists = true;
-      } else {
-        this.studentExists = false;
-        this.students.push(newStudent);
-        this.saveStudents();
-        this.form.reset();
-      }
+  onStudentAdded(student: { studentname: string; grade: number }) {
+    this.studentExists = this.isStudentExists(student.studentname);
+    if (!this.studentExists) {
+      this.students.push(student);
+      this.saveStudents();
     }
   }
 
@@ -90,6 +86,12 @@ export class AppComponent implements OnInit {
     this.students.sort((a, b) => this.sortAscending ? b.grade - a.grade : a.grade - b.grade);
     this.sortAscending = !this.sortAscending;
     this.saveStudents();
+  }
+
+  getAverageGrade(): number {
+    const nonDeletedStudents = this.students.filter(student => !student.deleted);
+    const total = nonDeletedStudents.reduce((sum, student) => sum + student.grade, 0);
+    return nonDeletedStudents.length > 0 ? total / nonDeletedStudents.length : 0;
   }
 
   isBrowser(): boolean {

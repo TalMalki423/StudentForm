@@ -1,0 +1,20 @@
+<button (click)="onSortGrades()">מיין לפי ציון</button>
+<table>
+  <thead>
+    <tr>
+      <th>שם התלמיד</th>
+      <th>ציון</th>
+      <th>פעולות</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let student of students" [ngClass]="getGradeClass(student.grade)">
+      <td [ngClass]="{ 'deleted': student.deleted }">{{ student.studentname }}</td>
+      <td [ngClass]="{ 'deleted': student.deleted }">{{ student.grade }}</td>
+      <td>
+        <button *ngIf="!student.deleted" (click)="onDelete(student)">מחק</button>
+        <button *ngIf="student.deleted" (click)="onRestore(student)">שחזר</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
